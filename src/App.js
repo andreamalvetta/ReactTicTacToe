@@ -9,22 +9,31 @@ class App extends Component {
     this.state = {
       turn: 'X',
       gameEnded: false,
-      winner: undefined,
+      winner: undefined
+    }
+
+    this.gameState = {
       board: Array(9).fill(''),
       totalMoves: 0
     }
   }
 
   clicked(event) {
-    let board = this.state.board;
+    if(this.state.gameEnded) {
+      return false;
+    }
+
+    let board = this.gameState.board;
     if(board[event.target.dataset.square] === '') {
       board[event.target.dataset.square] = this.state.turn;
       event.target.innerText = this.state.turn;
       this.setState({
-        turn: this.state.turn === 'X' ? 'O' : 'X',
-        board: board,
-        totalMoves: this.state.totalMoves + 1
+        turn: this.state.turn === 'X' ? 'O' : 'X'
       });
+      this.gameState = {
+        board: board,
+        totalMoves: this.gameState.totalMoves + 1
+      }
     }
 
     let result = this.checkWinner();
@@ -63,15 +72,14 @@ class App extends Component {
       [0, 4, 8],
       [2, 4, 6]
     ];
-    let board = this.state.board;
-    moves.map((element, i) => {
+    let board = this.gameState.board;
+    for (let i = 0; i < moves.length; i++) {
       if(board[moves[i][0]] === board[moves[i][1]] && board[moves[i][1]] === board[moves[i][2]]) {
         return board[moves[i][0]];
       }
-      return false;
-    });
+    }
 
-    if(this.state.totalMoves === 9) {
+    if(this.gameState.totalMoves === 9) {
       return 'draw';
     }
   }
@@ -84,15 +92,13 @@ class App extends Component {
           World's best tic tac toe AI
         </div>
         <div id="board" onClick={(e) => this.clicked(e)}>
-          <div className="square" data-square="0"></div>
-          <div className="square" data-square="1"></div>
-          <div className="square" data-square="2"></div>
-          <div className="square" data-square="3"></div>
-          <div className="square" data-square="4"></div>
-          <div className="square" data-square="5"></div>
-          <div className="square" data-square="6"></div>
-          <div className="square" data-square="7"></div>
-          <div className="square" data-square="8"></div>
+          {
+            this.gameState.board.map((element, i) => {
+              return (
+                <div key={i} className="square" data-square={i}></div>
+              );
+            })
+          }
         </div>
       </div>
     );
