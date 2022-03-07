@@ -1,12 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Board from '../Board';
 
-const App = () => {
-  return (
-    <div id="game">
-      <Board />
-    </div>
-  );
-};
+const App: FC = () => <Board />;
 
 export default App;

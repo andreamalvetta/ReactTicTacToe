@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Status from "../Status";
+import React, { FC, useState } from 'react';
+import Status from '../Status';
 
 interface StateInterface {
   turn?: string;
@@ -13,65 +13,94 @@ interface GameStateInterface {
   totalMoves: number;
 }
 
-const Board = () => {
+const boardData = {
+  player1: {
+    symbol: 'X',
+    name: 'player-1',
+    message: 'Player 1 wins!',
+  },
+  player2: {
+    symbol: 'O',
+    name: 'player-2',
+    message: 'Player 2 wins!',
+  },
+  draw: {
+    name: 'draw',
+    message: 'It is a tie!',
+  },
+};
+
+const Board: FC = () => {
   const [state, setState] = useState<StateInterface>({
-    turn: "X",
+    turn: boardData.player1.symbol,
     gameEnded: false,
     winner: undefined,
   });
 
   const [gameState, setGameState] = useState<GameStateInterface>({
-    board: Array(9).fill(""),
+    board: Array(9).fill(''),
     totalMoves: 0,
   });
 
-  const onClick = (event) => {
+  const onClick = (event: React.SyntheticEvent) => {
     if (state.gameEnded) {
       return false;
     }
 
-    let board = gameState.board;
-    if (board[event.target.dataset.square] === "") {
-      board[event.target.dataset.square] = state.turn;
-      event.target.classList.add("selected");
-      event.target.classList.add(state.turn === "X" ? "player-1" : "player-2");
+    const element = event.target as HTMLElement;
+
+    if (gameState.board[element.dataset.square] === '') {
+      gameState.board[element.dataset.square] = state.turn;
+      element.classList.add(
+        'selected',
+        state.turn === boardData.player1.symbol
+          ? boardData.player1.name
+          : boardData.player2.name,
+      );
 
       setState({
         ...state,
-        turn: state.turn === "X" ? "O" : "X",
+        turn:
+          state.turn === boardData.player1.symbol
+            ? boardData.player2.symbol
+            : boardData.player1.symbol,
       });
 
       setGameState({
-        board: board,
+        board: gameState.board,
         totalMoves: gameState.totalMoves + 1,
       });
     }
 
-    let result = checkWinner();
+    const result = checkWinner();
 
-    if (result === "X") {
+    if (result === boardData.player1.symbol) {
       setState({
         gameEnded: true,
-        winner: "X",
-        winnerLine: "Player 1 wins!",
+        winner: boardData.player1.symbol,
+        winnerLine: boardData.player1.message,
       });
-    } else if (result === "O") {
+    }
+
+    if (result === boardData.player2.symbol) {
       setState({
         gameEnded: true,
-        winner: "O",
-        winnerLine: "Player 2 wins!",
+        winner: boardData.player2.symbol,
+        winnerLine: boardData.player2.message,
       });
-    } else if (result === "draw") {
+    }
+
+    if (result === boardData.draw.name) {
       setState({
         gameEnded: true,
-        winner: "draw",
-        winnerLine: "It is a tie!",
+        winner: boardData.draw.name,
+        winnerLine: boardData.draw.message,
       });
     }
   };
 
   const checkWinner = () => {
-    let moves = [
+    const moves = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -81,34 +110,38 @@ const Board = () => {
       [0, 4, 8],
       [2, 4, 6],
     ];
-    let board = gameState.board;
-    for (let i = 0; i < moves.length; i++) {
+
+    for (let move of moves) {
       if (
-        board[moves[i][0]] === board[moves[i][1]] &&
-        board[moves[i][1]] === board[moves[i][2]]
+        gameState.board[move[0]] === gameState.board[move[1]] &&
+        gameState.board[move[1]] === gameState.board[move[2]]
       ) {
-        return board[moves[i][0]];
+        return gameState.board[move[0]];
       }
     }
 
     if (gameState.totalMoves === 8) {
-      return "draw";
+      return boardData.draw.name;
     }
   };
 
   return (
-    <>
-      <Status message={state.winnerLine} />
+    <div id="game">
+      {state.winnerLine && <Status>{state.winnerLine}</Status>}
       <div
         id="board"
-        className={state.turn === "X" ? "player-1" : "player-2"}
+        className={
+          state.turn === boardData.player1.symbol
+            ? boardData.player1.name
+            : boardData.player2.name
+        }
         onClick={onClick}
       >
-        {gameState.board.map((_, i) => {
-          return <div key={i} className="square" data-square={i}></div>;
-        })}
+        {gameState.board.map((_, i) => (
+          <div key={i} className="square" data-square={i}></div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 

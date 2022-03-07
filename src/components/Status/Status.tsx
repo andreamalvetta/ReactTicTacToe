@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-const Status = props => {
-  return (
-    <div id="status" className={props.message ? 'visible' : ''}>
-      <h3>{props.message}</h3>
-      <a href="./">Restart</a>
-    </div>
-  );
-};
+interface StatusInterface {
+  children: string;
+}
+
+const Status: FC<StatusInterface> = ({ children }) => (
+  <div id="status">
+    <h3>{children}</h3>
+    <a href="./">Restart</a>
+  </div>
+);
 
 export default Status;

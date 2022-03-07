@@ -4,5 +4,5 @@ import Status from './Status';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<Status />, div);
+  ReactDOM.render(<Status>Test</Status>, div);
 });

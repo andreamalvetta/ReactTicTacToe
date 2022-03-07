@@ -1,0 +1,5 @@
+{
+  "**/*": "prettier --write",
+  "packages/**/*.{js,jsx}": ["eslint --fix"],
+  "packages/**/*.scss": ["stylelint --syntax scss --fix"]
+}
