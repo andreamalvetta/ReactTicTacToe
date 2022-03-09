@@ -1,5 +1,7 @@
+/** @jsxImportSource @emotion/react */
 import React, { FC, useState } from 'react';
 import Status from '../Status';
+import * as styles from './Board.styles';
 
 interface StateInterface {
   turn?: string;
@@ -126,10 +128,10 @@ const Board: FC = () => {
   };
 
   return (
-    <div id="game">
+    <div css={styles.game}>
       {state.winnerLine && <Status>{state.winnerLine}</Status>}
       <div
-        id="board"
+        css={styles.board}
         className={
           state.turn === boardData.player1.symbol
             ? boardData.player1.name
